@@ -1,0 +1,33 @@
+{% extends 'orders/baselayout.html' %}
+{% block content %}
+<p class="heading extra-heading">Orders</p>
+<hr />
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-11">
+        <div class="container cart" id="main_container">
+          <div class="row header">
+            <div class="col">Food</div>
+            <div class="col">Type(for pizza)</div>
+            <div class="col">Size</div>
+            <div class="col">Toppings</div>
+            <div class="col">Extras</div>
+            <div class="col">Price</div>
+            <div class="col">User</div>
+          </div>
+          {% for order in orders %}
+            <div class="row cart-row">
+              <div class="col">{{ order.dish }}</div>
+              <div class="col">{% if order.pizza_type is not None %}{{ order.pizza_type }}{% endif %}</div>
+              <div class="col">{% if order.size is not None %}{{ order.size }}{% else %}&nbsp{% endif %}</div>
+              <div class="col">{% for topping in order.pizza_toppings.all %}{{ topping }}<br>{% if toppings == ''  %}&nbsp{% endif %}{% endfor %}</div>
+              <div class="col">{% for extra in order.sub_additions.all %}{{ extra }}<br>{% endfor %}</div>
+              <div class="col">${{ order.price }}</div>
+              <div class="col">{{order.username}}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

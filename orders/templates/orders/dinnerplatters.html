@@ -1,0 +1,56 @@
+{% extends 'orders/baselayout.html' %}
+{% block content %}
+<p class="heading extra-heading">Dinner Platters</p>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-11">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Small</th>
+            <th scope="col">Large</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dplatters in dinner_platters %}
+          <tr>
+            <td>{{dplatters.dinner_platters}}</td>
+            <td>${{dplatters.small_price}}&nbsp&nbsp{% csrf_token %}<button data-dish="{{dplatters.dinner_platters}}" data-type="" data-size="Small" data-price="{{dplatters.small_price}}" type="submit" class="btn btn-primary btn-sm">Add to Cart</button></td>
+            <td>${{dplatters.large_price}}&nbsp&nbsp{% csrf_token %}<button data-dish="{{dplatters.dinner_platters}}" data-type="" data-size="Large" data-price="{{dplatters.large_price}}" type="submit" class="btn btn-primary btn-sm">Add to Cart</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script >
+  document.addEventListener("DOMContentLoaded", () => {
+
+    let buttons = document.querySelectorAll('.btn-primary');
+    buttons.forEach(button => {
+      button.onclick = function() {
+
+        let crsf = this.previousSibling.value;
+
+        let request = new XMLHttpRequest;
+        let data = new FormData();
+        data.append("dish", this.dataset.dish);
+        data.append("type", this.dataset.type);
+        data.append("size", this.dataset.size);
+        data.append("price", this.dataset.price);
+
+        request.open('POST', '/added');
+        request.setRequestHeader('X-CSRFToken', crsf);
+        request.send(data);
+
+        request.onload = () => {
+          let data = JSON.parse(request.responseText);
+        }
+
+      }
+    });
+  });
+  </script>
+{% endblock %}

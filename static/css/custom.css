@@ -1,0 +1,127 @@
+/*class*/
+.account-form-container{
+  background-color:rgb(205, 220, 222);
+  opacity:0.9;
+  border-bottom-left-radius:10px;
+  border-bottom-right-radius: 10px;
+  padding:20px;
+  color:black;
+  margin:auto;
+  text-align:center;
+  box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.account-title-container{
+margin:auto;
+opacity:0.9;
+background-color:rgb(21, 138, 40);
+border-top-left-radius:10px;
+border-top-right-radius:10px;
+padding:15px;
+font-family:'Segoe UI','Arial';
+font-size:25px;
+font-weight:400;
+text-align:center;
+margin-top:150px;
+}
+.btn
+{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.error-messages
+{
+  font-weight: 400;
+  font-size:18px;
+  color:Red;
+}
+.heading
+{
+  margin-bottom: 10px;
+  text-align:center;
+  color:red;
+  font-size:25px;
+  font-weight:500;
+  font-family:Segoe UI;
+}
+.extra-heading
+{
+  margin-top:10px;
+}
+.nav-button a:hover
+{
+  text-decoration:none;
+  color:black;
+}
+/*ID*/
+#account-layout{
+  background-image: url('/static/image/pizza2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  width:100%;
+  height:100vh;
+}
+#nav-merge
+{
+  background-color:#f8f9fa;
+  text-align:center;
+}
+#nav-merge-pinocchio
+{
+  font-family:'Lucida Handwriting';
+  color:red;
+  font-size:40px;
+  font-weight:400;
+}
+#menu-layout{
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  width:100%;
+  height:100vh;
+}
+#menu-layout a:hover
+{
+  color:black;
+}
+#pinocchio{
+  font-style:italic;
+  font-family:cursive;
+  color:red;
+}
+div.cart > div{
+  border-bottom: 1px solid #dfe3e7;
+  animation-name: hide;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-play-state: paused;
+
+}
+div.cart div.header div {
+  font-weight: 200;
+  font-family:cursive;
+  color:orange;
+
+}
+@keyframes hide {
+  0% {
+      opacity: 1;
+      height: 100%;
+      line-height: 100%;
+      padding: 20px;
+      margin-bottom: 10px;
+  }
+  75% {
+      opacity: 0;
+      height: 100%;
+      line-height: 100%;
+      padding: 20px;
+      margin-bottom: 10px;
+  }
+  100% {
+      opacity: 0;
+      height: 0px;
+      line-height: 0px;
+      padding: 0px;
+      margin-bottom: 0px;
+  }
+}

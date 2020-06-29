@@ -1,0 +1,190 @@
+{% extends 'orders/baselayout.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-8">
+      <p class="heading">Regular Pizza's</p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-11">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Small</th>
+                  <th scope="col">Large</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rpizza in regular_pizza %}
+                <tr>
+                  <td>{{rpizza.pizza}}</td>
+                  <td>${{rpizza.price_small}}&nbsp&nbsp{%csrf_token%}<button data-number="{% if forloop.counter0 == 4 %}{{forloop.counter0|add:'1' }}{% else %}{{forloop.counter0}}{% endif %}" data-dish="{{rpizza.pizza}}" data-type="Regular Pizza"
+                      data-size="Small" data-price="{{rpizza.price_small}}" type="submit" class="btn btn-primary btn-sm" {% if forloop.counter0 != 0 %} data-toggle="modal" data-target="#addToppings" {% endif %}>{% if forloop.counter0 == 0 %}Add to
+                      Cart
+                      {% elif forloop.counter0 == 1 %}Choose Topping {% else %}Choose Toppings{% endif %}
+                    </button></td>
+                  <td>${{rpizza.price_large}}&nbsp&nbsp{%csrf_token%}<button data-number="{% if forloop.counter0 == 4 %}{{forloop.counter0|add:'1' }}{% else %}{{forloop.counter0}}{% endif %}" data-dish="{{rpizza.pizza}}" data-type="Regular Pizza"
+                      data-size="Large" data-price="{{rpizza.price_large}}" type="submit" class="btn btn-primary btn-sm" {% if forloop.counter0 != 0 %} data-toggle="modal" data-target="#addToppings" {% endif %}>{% if forloop.counter0 == 0 %}Add to
+                      Cart
+                      {% elif forloop.counter0 == 1 %}Choose Topping {% else %}Choose Toppings{% endif %}
+                    </button></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="heading">Sicilian Pizza's</p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-11">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Small</th>
+                  <th scope="col">Large</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for spizza in sicilian_pizza %}
+                <tr>
+                  <td>{{spizza.pizza}}</td>
+                  <td>${{spizza.price_small}}&nbsp&nbsp{%csrf_token%}<button data-number="{% if forloop.counter0 == 4 %}{{forloop.counter0|add:'1' }}{% else %}{{forloop.counter0}}{% endif %}" data-dish="{{spizza.pizza}}" data-type="Sicilian Pizza"
+                      data-size="Small" data-price="{{spizza.price_small}}" type="submit" class="btn btn-primary btn-sm" {% if forloop.counter0 != 0 %} data-toggle="modal" data-target="#addToppings" {% endif %}>{% if forloop.counter0 == 0 %}Add to
+                      Cart
+                      {% elif forloop.counter0 == 1 %}Choose Topping {% else %}Choose Toppings{% endif %}
+                    </button></td>
+                  <td>${{spizza.price_large}}&nbsp&nbsp{%csrf_token%}<button data-number="{% if forloop.counter0 == 4 %}{{forloop.counter0|add:'1' }}{% else %}{{forloop.counter0}}{% endif %}" data-dish="{{spizza.pizza}}" data-type="Sicilian Pizza"
+                      data-size="Large" data-price="{{spizza.price_large}}" type="submit" class="btn btn-primary btn-sm" {% if forloop.counter0 != 0 %} data-toggle="modal" data-target="#addToppings" {% endif %}>{% if forloop.counter0 == 0 %}Add to
+                      Cart
+                      {% elif forloop.counter0 == 1 %}Choose Topping {% else %}Choose Toppings{% endif %}
+                    </button></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <p class="heading">Toppings</p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-11">
+            <table class="table">
+              {% for item in toppings %}
+              <tr>
+                <td>
+                  {{item.topping}}
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addToppings" tabindex="-1" role="dialog" aria-labelledby="Add Toppings" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Choose Toppings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Choose toppings for your Pizza</p>
+        <div class="form-group col-4" id="selectors_box">
+          <select class="selector" class="custom-select form-control">
+            {% for option in toppings %}
+            <option value="{{ option.id }}">{{ option.topping }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="addCart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    let selector = document.querySelector('.selector');
+    let buttons = document.querySelectorAll('.btn-primary');
+    let selectors_box = document.querySelector('#selectors_box');
+    buttons.forEach(button => {
+      button.onclick = function() {
+        let number = this.dataset.number;
+
+        if (number != 0) {
+          while (selectors_box.childNodes.length > 2) {
+            selectors_box.removeChild(selectors_box.lastChild);
+          }
+
+          for (let j = 0; j < (number - 1); j++) {
+            selectors_box.appendChild(selector.cloneNode(true));
+          }
+
+          let csrf = button.previousSibling.value;
+          let data = new FormData();
+          data.append("dish", this.dataset.dish);
+          data.append("type", this.dataset.type);
+          data.append("size", this.dataset.size);
+          data.append("price", this.dataset.price);
+
+          document.querySelector('#addCart').onclick = function() {
+
+            let request = new XMLHttpRequest;
+            let counter = 0;
+            selectors_box.childNodes.forEach(option => {
+
+              if (option.className == 'selector') {
+                data.append("toppings" + counter, option.value);
+                counter++;
+              }
+            });
+
+            request.open('POST', '/added');
+            request.setRequestHeader('X-CSRFToken', csrf);
+
+            request.send(data);
+            document.querySelector('.modal-footer').childNodes[1].click();
+
+            request.onload = () => {
+              let data = JSON.parse(request.responseText);
+            }
+          }
+        } else {
+          let csrf = this.previousSibling.value;
+
+          let request = new XMLHttpRequest;
+          let data = new FormData();
+          data.append("dish", this.dataset.dish);
+          data.append("type", this.dataset.type);
+          data.append("size", this.dataset.size);
+          data.append("price", this.dataset.price);
+
+          request.open('POST', '/added');
+          request.setRequestHeader('X-CSRFToken', csrf);
+          request.send(data);
+
+          request.onload = () => {
+            let data = JSON.parse(request.responseText);
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

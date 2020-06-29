@@ -1,0 +1,199 @@
+{% extends 'orders/baselayout.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-8">
+      <p class="heading extra-heading">Subs</p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-11">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Small</th>
+                  <th scope="col">Large</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sub in subs %}
+                <tr>
+                  <td>{{sub.sub}}</td>
+                  <td>{% if sub.sub == 'Sausage,Peppers & Onions' %}
+                    {% else %}
+                    ${{sub.small_price}}&nbsp&nbsp{% csrf_token %}<button data-additions="{% for item in sub.extra.all %}{{ item.extra }}:{{ item.price }},{% endfor %}" data-dish="{{ sub.sub }}" data-type="" data-size="Small"
+                      data-price="{{ sub.small_price }}" type="submit" class="btn btn-primary btn-sm subs" data-toggle="modal" data-target="#addExtras">Add to Cart</button></td>
+                  {% endif %}
+                  <td>${{sub.large_price}}&nbsp&nbsp{% csrf_token %}<button data-additions="{% for item in sub.extra.all %}{{ item.extra }}:{{ item.price }},{% endfor %}" data-dish="{{ sub.sub }}" data-type="" data-size="Large"
+                      data-price="{{ sub.large_price }}" type="submit" class="btn btn-primary btn-sm subs" data-toggle="modal" data-target="#addExtras">Add to Cart</button></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <p class="heading extra-heading">Extras</p>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-11">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for extra in extras %}
+                {% if extra.extra == 'Extra Cheese on any subs' %}
+                <tr>
+                  <td>{{extra.extra}}</td>
+                  <td>${{extra.price}}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td>{{extra.extra}}<span style="color:grey; font-size:13px;"> (only for steaks)</span></td>
+                  <td>${{extra.price}}</td>
+                </tr>
+                {%endif%}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addExtras" tabindex="-1" role="dialog" aria-labelledby="Add Extras" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add some extra stuffs!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to add anything?</p>
+        <div class="form-group col-8" id="container">
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel">Close</button>
+        <button type="button" class="btn btn-primary" id="addCart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--handlebars-->
+{% verbatim %}
+<script id="check_template" type="text/x-handlerbar-template">
+  <div id="options">
+          <input id="nothing" class="checkboxes" data-add="" type="checkbox" value="no_addition">&nbspNo!<br>
+        {{#each additions}}
+          <input class="checkboxes anything" data-price="{{ this.price }}" type="checkbox" value="{{ this.name }}">&nbsp{{ this.name }}<br>
+        {{/each}}
+        </div>
+      </script>
+{% endverbatim %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    let buttons = document.querySelectorAll('.subs');
+
+    buttons.forEach(button => {
+      button.onclick = function() {
+        const template = Handlebars.compile(document.querySelector('#check_template').innerHTML);
+
+        let pre_add_list = (button.dataset.additions).split(",");
+        let add_list = [];
+
+
+        for (let k = 0; k < (pre_add_list.length - 1); k++) {
+          let prepare = pre_add_list[k].split(":");
+          add_list.push({name: prepare[0],price: prepare[1]});
+        }
+        const content = template({
+          "additions": add_list
+        });
+        let container = document.querySelector('#container');
+        container.innerHTML = '';
+
+        container.insertAdjacentHTML('beforeend', content);
+        let nothing = document.querySelector('#nothing');
+
+        // Just avoid take more adds if nothing is checked
+        nothing.addEventListener('change', () => {
+          let anythings = document.querySelectorAll('.anything');
+
+          anythings.forEach(anything => {
+            if (anything.disabled) {
+              anything.removeAttribute("disabled");
+            } else {
+              anything.checked = false;
+              anything.setAttribute("disabled", "disabled");
+            }
+          });
+        });
+
+        let crsf = this.previousSibling.value;
+        let request = new XMLHttpRequest;
+        let data = new FormData();
+        data.append("dish", this.dataset.dish);
+        data.append("type", this.dataset.type);
+        data.append("size", this.dataset.size);
+
+        let price = parseFloat(this.dataset.price);
+
+        request.open('POST', '/added');
+        request.setRequestHeader('X-CSRFToken', crsf);
+
+        document.querySelector('#addCart').onclick = function() {
+
+          if (document.querySelector('#nothing').checked == false) {
+
+            let checkboxes = document.querySelectorAll('.checkboxes');
+            let counter = 0;
+            checkboxes.forEach(checkbox => {
+              if (checkbox.checked) {
+                data.append("checkbox" + counter, checkbox.value);
+                counter++;
+                price += parseFloat(checkbox.dataset.price);
+              }
+            })
+
+            request.open('POST', '/added');
+            request.setRequestHeader('X-CSRFToken', crsf);
+            data.append("price", price.toFixed(2));
+            request.send(data);
+            document.querySelector('#cancel').click();
+
+            request.onload = () => {
+              let data = JSON.parse(request.responseText);
+            }
+
+          } else {
+
+            request.open('POST', '/added');
+            request.setRequestHeader('X-CSRFToken', crsf);
+            data.append("price", price.toFixed(2));
+            request.send(data);
+            document.querySelector('#cancel').click();
+
+            request.onload = () => {
+              let data = JSON.parse(request.responseText);
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'account/accountlayout.html'%}
+{% block title %}
+Register
+{% endblock %}
+{% block content %}
+<div class="col-5 account-form-container">
+  <form method='post' class="text-center border border-light p-2">
+    {% csrf_token %}
+    <!-- Default form register -->
+    <div class="form-row mb-2">
+      <div class="col">
+        <!-- First name -->
+        {{form.first_name}}
+      </div>
+      <div class="col">
+        <!-- Last name -->
+        {{form.last_name}}
+      </div>
+    </div>
+    <div class="mb-2">
+      {{form.username}}
+    </div>
+    <!-- E-mail -->
+    <div class="mb-2">
+      {{form.email}}
+    </div>
+
+    <!-- Password -->
+    <div class="mb-2">
+      {{form.password1}}
+    </div>
+
+    <!-- Confirm password -->
+    <div class="mb-2">
+      {{form.password2}}
+    </div>
+    <!-- Sign up button -->
+    <button class="btn btn-info my-4 btn-block" type="submit">Sign in</button>
+  </form>
+  {% if form.errors %}
+  {% for field in form %}
+  {% for error in field.errors%}
+  <p class="error-messages">{{error}}</p>
+  {% endfor %}
+  {% endfor %}
+  {% endif %}
+</div>
+{% endblock %}
