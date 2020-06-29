@@ -37,10 +37,4 @@ It contains eight templates
 ### static folder
 It handles all the CSS as well as images of website
 
-###Personal Touch
-1. Navigating to different pages through url is restricted, must be an authenticated user to see the menu
-2. Removing items from the cart
-3. Admin can view the order along with customer name
 
-######updated.txt
-Video length minimized
